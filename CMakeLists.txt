@@ -10,6 +10,7 @@ add_executable (
   ElfFileParser 
   "ElfFileParser.cpp" 
   "ElfParser.cpp"
- "type/elf.h")
+  "util/Printer.cpp"    
+ )
 
 # TODO: Add tests and install targets if needed.
