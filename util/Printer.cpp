@@ -37,7 +37,7 @@ void Printer::print_hex_array2(uint16_t const* array, const unsigned int size)
 void Printer::print_char_array(unsigned char const* array, const unsigned int size)
 {
     for (unsigned int i = 0; i < size; i++)
-        printf("%c ", array[i]);
+        printf("%.2x ", array[i]);
 
     printf("\n");
 }
