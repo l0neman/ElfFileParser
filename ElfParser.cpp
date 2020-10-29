@@ -4,8 +4,8 @@
 
 #include "type/elf.h"
 #include "util/Printer.h"
-#include <typeinfo>
 
+ElfParser::ElfParser() : ElfParser(nullptr) {}
 
 ElfParser::ElfParser(char const* elf_file)
 {
@@ -14,8 +14,11 @@ ElfParser::ElfParser(char const* elf_file)
     this->elf_header32_ = Elf32_Ehdr();
     this->elf_header64_ = Elf64_Ehdr();
 
-    this->program_header32_array_ = nullptr;
-    this->program_header64_array_ = nullptr;
+    this->program_header32_list_ = nullptr;
+    this->program_header64_list_ = nullptr;
+
+    if(elf_file == nullptr)
+        return;
 
     const auto f = fopen_s(&this->elf_file_, elf_file, "rb");
     printf("open elf file: %s\n\n", elf_file);
@@ -25,23 +28,25 @@ ElfParser::ElfParser(char const* elf_file)
 
 ElfParser::~ElfParser()
 {
+    printf("\n>>>>>>>>>>>> release <<<<<<<<<<<<\n\n");
+
     if (this->elf_file_ != nullptr) {
         printf("close elf file.\n");
         fclose(this->elf_file_);
     }
 
-    if(this->program_header32_array_ != nullptr)
+    if (this->program_header32_list_ != nullptr)
     {
         printf("delete program header 32 array.\n");
-        delete[] this->program_header32_array_;
-        this->program_header32_array_ = nullptr;
+        delete[] this->program_header32_list_;
+        this->program_header32_list_ = nullptr;
     }
 
-    if (this->program_header64_array_ != nullptr)
+    if (this->program_header64_list_ != nullptr)
     {
         printf("delete program header 64 array.\n");
-        delete[] this->program_header64_array_;
-        this->program_header64_array_ = nullptr;
+        delete[] this->program_header64_list_;
+        this->program_header64_list_ = nullptr;
     }
 }
 
@@ -55,37 +60,37 @@ void ElfParser::parse()
     }
 
     parse_elf_header();
-    parse_program_header();
+    parse_program_header_list();
 }
 
 template <typename T = Elf32_Ehdr>
-void print_elf_header(T* header)
+void print_elf_header(T* header, const uint8_t bit)
 {
     printf("ident: ");
     Printer::print_char_array(header->e_ident, 16);
-    printf("type: %d\n", header->e_type);
-    printf("machine: %d\n", header->e_machine);
-    printf("version: %d\n", header->e_version);
-    if (typeid(T) == typeid(Elf32_Ehdr))
+    printf("type: %u\n", header->e_type);
+    printf("machine: %u\n", header->e_machine);
+    printf("version: %u\n", header->e_version);
+    if (bit == 32)
     {
         printf("entry: %u\n", header->e_entry);
         printf("phoff: %u\n", header->e_phoff);
         printf("shoff: %u\n", header->e_shoff);
     }
-    else // typeid(T) == typeid(Elf64_Ehdr)
+    else // bit == 64
     {
         printf("entry: %llu\n", header->e_entry);
         printf("phoff: %llu\n", header->e_phoff);
         printf("shoff: %llu\n", header->e_shoff);
     }
 
-    printf("flags: %d\n", header->e_flags);
-    printf("ehsize: %d\n", header->e_ehsize);
-    printf("phentsize: %d\n", header->e_phentsize);
-    printf("phnum: %d\n", header->e_phnum);
-    printf("shentsize: %d\n", header->e_shentsize);
-    printf("shnum: %d\n", header->e_shnum);
-    printf("shstrndx: %d\n", header->e_shstrndx);
+    printf("flags: %u\n", header->e_flags);
+    printf("ehsize: %u\n", header->e_ehsize);
+    printf("phentsize: %u\n", header->e_phentsize);
+    printf("phnum: %u\n", header->e_phnum);
+    printf("shentsize: %u\n", header->e_shentsize);
+    printf("shnum: %u\n", header->e_shnum);
+    printf("shstrndx: %u\n", header->e_shstrndx);
 }
 
 bool ElfParser::check_elf()
@@ -169,44 +174,113 @@ void ElfParser::parse_elf_header()
     }
 
     if (this->elf_bit_ == 32)
-        print_elf_header(&this->elf_header32_);
+        print_elf_header(&this->elf_header32_, 32);
     else // this->elf_bit_ == 64
-        print_elf_header(&this->elf_header64_);
+        print_elf_header(&this->elf_header64_, 64);
 }
 
-void ElfParser::parse_program_header()
+void ElfParser::parse_program_header_list()
 {
     printf("\n>>>>>>>>>>>> parse program header <<<<<<<<<<<<\n\n");
 
     long program_header_offset = 0;
+    size_t program_header_count = 0;
     size_t program_header_size = 0;
 
-    if (this->elf_bit_ == 32) 
+    if (this->elf_bit_ == 32)
     {
         program_header_offset = this->elf_header32_.e_phoff;
-        program_header_size = this->elf_header32_.e_phnum;
+        program_header_count = this->elf_header32_.e_phnum;
+        program_header_size = sizeof(Elf32_Phdr);
+
+        this->program_header32_list_ = new Elf32_Phdr[program_header_count];
+
+
         printf("program header offset: %u\n", this->elf_header32_.e_phoff);
         printf("program header size: %u\n", this->elf_header32_.e_phnum);
     }
     else // this->elf_bit_ == 64
     {
         program_header_offset = this->elf_header64_.e_phoff;
-        program_header_size = this->elf_header64_.e_phnum;
+        program_header_count = this->elf_header64_.e_phnum;
+        program_header_size = sizeof(Elf64_Phdr);
+
+        this->program_header64_list_ = new Elf64_Phdr[program_header_count];
+
         printf("program header offset: %llu\n", this->elf_header64_.e_phoff);
         printf("program header size: %u\n", this->elf_header64_.e_phnum);
     }
 
-    if (0 != fseek(this->elf_file_, program_header_offset, 0))
+    for (size_t i = 0; i < program_header_count; i++)
+    {
+        parse_program_header(program_header_offset, i);
+        program_header_offset += program_header_size;
+    }
+}
+
+template <typename T = Elf32_Phdr>
+static void print_program_header(T* header, const uint8_t bit)
+{
+    printf("p_type: %8x\n", header->p_type);
+    printf("p_flags: %u\n", header->p_flags);
+    if (bit == 32) 
+    {
+        printf("p_offset: %u\n", header->p_offset);
+        printf("p_vaddr: %u\n", header->p_vaddr);
+        printf("p_paddr: %u\n", header->p_paddr);
+        printf("p_filesz: %u\n", header->p_filesz);
+        printf("p_memsz: %u\n", header->p_memsz);
+        printf("p_align: %u\n", header->p_align);
+    }
+    else // bit == 64
+    {
+        printf("p_offset: %8x\n", header->p_offset);
+        printf("p_vaddr: %llu\n", header->p_vaddr);
+        printf("p_paddr: %llu\n", header->p_paddr);
+        printf("p_filesz: %llu\n", header->p_filesz);
+        printf("p_memsz: %llu\n", header->p_memsz);
+        printf("p_align: %llu\n", header->p_align);
+    }
+}
+
+void ElfParser::parse_program_header(const long offset, const size_t index)
+{
+    printf("\n>>>>>>>>>>>> parse program header <<<<<<<<<<<<\n\n");
+
+    printf("index: %llu\n", index);
+    printf("offset: %ld\n", offset);
+    if (0 != fseek(this->elf_file_, offset, 0))
     {
         printf("#parse_program_header - seek file error.\n");
         return;
     }
 
-    // todo:
-    printf("todo...\n");
+    void* program_header = nullptr;
+    size_t program_header_size = 0;
 
-    for(size_t i = 0; i < program_header_size; i++)
+    if (this->elf_bit_ == 32)
     {
-        
+        auto& header = this->program_header32_list_[index];
+        program_header = &header;
+
+        program_header_size = sizeof(Elf32_Phdr);
     }
+    else // this->elf_bit_ == 64
+    {
+        auto& header = this->program_header64_list_[index];
+        program_header = &header;
+
+        program_header_size = sizeof(Elf64_Phdr);
+    }
+
+    if (0 == fread(program_header, program_header_size, 1, this->elf_file_))
+    {
+        printf("parse program header%d error.\n", this->elf_bit_);
+        return;
+    }
+
+    if (this->elf_bit_ == 32)
+        print_program_header(&this->program_header32_list_[index], 32);
+    else
+        print_program_header(&this->program_header64_list_[index], 64);
 }

@@ -7,6 +7,7 @@
 class ElfParser
 {
 public:
+    ElfParser();
     ElfParser(char const* elf_file);
     ~ElfParser(); 
     void parse();
@@ -16,12 +17,13 @@ private:
     Elf32_Ehdr elf_header32_{};
     Elf64_Ehdr elf_header64_{};
 
-    Elf32_Phdr* program_header32_array_;
-    Elf64_Ehdr* program_header64_array_;
+    Elf32_Phdr* program_header32_list_;
+    Elf64_Phdr* program_header64_list_;
      
     bool check_elf();
     void parse_elf_header();
-    void parse_program_header();
+    void parse_program_header_list();
+    void parse_program_header(long offset, size_t index);
 };
 
 #endif // ELF_PARSER_H
