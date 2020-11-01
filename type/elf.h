@@ -316,4 +316,33 @@ enum {
     ELFOSABI_STANDALONE = 255   // Standalone (embedded) application
 };
 
+
+// Section header.
+struct Elf32_Shdr {
+    Elf32_Word sh_name;      // 段名，位于 .shstrtab 的字符串表。sh_name 是段名在其中的偏移
+    Elf32_Word sh_type;      // 段类型（SHT_*）
+    Elf32_Word sh_flags;     // 段标志位（SHF_*）
+    Elf32_Addr sh_addr;      // 段的虚拟地址，前提是该段可被加载，否则为 0
+    Elf32_Off  sh_offset;    // 段偏移，前提是该段存在于文件中，否则无意义
+    Elf32_Word sh_size;      // 段的长度
+    Elf32_Word sh_link;      // 段的链接信息
+    Elf32_Word sh_info;      // 段的额外信息
+    Elf32_Word sh_addralign; // 段地址对齐
+    Elf32_Word sh_entsize;   // 项的长度
+};
+
+// Section header for ELF64 - same fields as ELF32, different types.
+struct Elf64_Shdr {
+    Elf64_Word  sh_name;
+    Elf64_Word  sh_type;
+    Elf64_Xword sh_flags;
+    Elf64_Addr  sh_addr;
+    Elf64_Off   sh_offset;
+    Elf64_Xword sh_size;
+    Elf64_Word  sh_link;
+    Elf64_Word  sh_info;
+    Elf64_Xword sh_addralign;
+    Elf64_Xword sh_entsize;
+};
+
 #endif // !ELF_H
