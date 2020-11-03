@@ -42,6 +42,7 @@ constexpr char ELFMAG[] = "\177ELF";
 constexpr int SELFMAG = 4;
 constexpr int NT_PRSTATUS = 1;
 
+// Elf 文件头
 struct Elf32_Ehdr {
     unsigned char e_ident[EI_NIDENT]; // 文件标识
     Elf32_Half    e_type;      // 文件类型
@@ -77,7 +78,7 @@ struct Elf64_Ehdr {
     Elf64_Half    e_shstrndx;
 };
 
-// Program header for ELF32.
+// 程序头表，表示装载后的 Segment 结构
 struct Elf32_Phdr {
     Elf32_Word p_type;   // 段类型
     Elf32_Off  p_offset; // 段在文件中的偏移
@@ -89,7 +90,7 @@ struct Elf32_Phdr {
     Elf32_Word p_align;  // 段的对齐属性，实际对齐字节等于 2 的 p_align 次方
 };
 
-// Program header for ELF64.
+
 struct Elf64_Phdr {
     Elf64_Word  p_type;  
     Elf64_Word  p_flags; 
@@ -317,7 +318,7 @@ enum {
 };
 
 
-// Section header.
+// 段表
 struct Elf32_Shdr {
     Elf32_Word sh_name;      // 段名，位于 .shstrtab 的字符串表。sh_name 是段名在其中的偏移
     Elf32_Word sh_type;      // 段类型（SHT_*）
@@ -331,7 +332,7 @@ struct Elf32_Shdr {
     Elf32_Word sh_entsize;   // 项的长度
 };
 
-// Section header for ELF64 - same fields as ELF32, different types.
+
 struct Elf64_Shdr {
     Elf64_Word  sh_name;
     Elf64_Word  sh_type;
