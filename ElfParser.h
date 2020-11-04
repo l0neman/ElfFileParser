@@ -3,24 +3,6 @@
 #include <cstdio>
 #include "type/elf.h"
 
-struct Elf_Str
-{
-    Elf_Str(const char*str, const size_t len)
-    {
-        this->str = str;
-        this->len = len;
-    }
-    Elf_Str()
-    {
-        this->str = nullptr;
-        this->len = -1;
-    }
-    ~Elf_Str() = default;
-    const char* str;
-    size_t len;
-};
-
-
 class ElfParser
 {
 public:
@@ -41,9 +23,11 @@ private:
     Elf32_Shdr* section_header32_list_;
     Elf64_Shdr* section_header64_list_;
 
-    char* string_buffer_;
-    Elf_Str* string_table_;
-     
+    char* string_table_;
+
+    Elf32_Sym* symbol32_list_;
+    Elf64_Sym* symbol64_list_;
+
     bool check_elf();
     void parse_elf_header();
     void parse_section_header_list();
@@ -51,6 +35,10 @@ private:
     void parse_string_table();
     void parse_program_header_list();
     void parse_program_header(long offset, size_t index) const;
+    void parse_section_list();
+    void parse_symbol_table(long offset, size_t size);
+
+    const char* get_string_from_string_table(size_t offset) const;
 };
 
 #endif // ELF_PARSER_H

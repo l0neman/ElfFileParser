@@ -346,4 +346,178 @@ struct Elf64_Shdr {
     Elf64_Xword sh_entsize;
 };
 
+// Special section indices.
+enum {
+    SHN_UNDEF = 0,          // Undefined, missing, irrelevant, or meaningless
+    SHN_LORESERVE = 0xff00, // Lowest reserved index
+    SHN_LOPROC = 0xff00,    // Lowest processor-specific index
+    SHN_HIPROC = 0xff1f,    // Highest processor-specific index
+    SHN_LOOS = 0xff20,      // Lowest operating system-specific index
+    SHN_HIOS = 0xff3f,      // Highest operating system-specific index
+    SHN_ABS = 0xfff1,       // Symbol has absolute value; does not need relocation
+    SHN_COMMON = 0xfff2,    // FORTRAN COMMON or C external global variables
+    SHN_XINDEX = 0xffff,    // Mark that the index is >= SHN_LORESERVE
+    SHN_HIRESERVE = 0xffff  // Highest reserved index
+};
+ 
+ // Section types.
+ enum : unsigned {
+     SHT_NULL = 0,                     // No associated section (inactive entry).
+     SHT_PROGBITS = 1,                 // Program-defined contents.
+     SHT_SYMTAB = 2,                   // Symbol table.
+     SHT_STRTAB = 3,                   // String table.
+     SHT_RELA = 4,                     // Relocation entries; explicit addends.
+     SHT_HASH = 5,                     // Symbol hash table.
+     SHT_DYNAMIC = 6,                  // Information for dynamic linking.
+     SHT_NOTE = 7,                     // Information about the file.
+     SHT_NOBITS = 8,                   // Data occupies no space in the file.
+     SHT_REL = 9,                      // Relocation entries; no explicit addends.
+     SHT_SHLIB = 10,                   // Reserved.
+     SHT_DYNSYM = 11,                  // Symbol table.
+     SHT_INIT_ARRAY = 14,              // Pointers to initialization functions.
+     SHT_FINI_ARRAY = 15,              // Pointers to termination functions.
+     SHT_PREINIT_ARRAY = 16,           // Pointers to pre-init functions.
+     SHT_GROUP = 17,                   // Section group.
+     SHT_SYMTAB_SHNDX = 18,            // Indices for SHN_XINDEX entries.
+     SHT_LOOS = 0x60000000,            // Lowest operating system-specific type.
+     SHT_GNU_ATTRIBUTES = 0x6ffffff5,  // Object attributes.
+     SHT_GNU_HASH = 0x6ffffff6,        // GNU-style hash table.
+     SHT_GNU_verdef = 0x6ffffffd,      // GNU version definitions.
+     SHT_GNU_verneed = 0x6ffffffe,     // GNU version references.
+     SHT_GNU_versym = 0x6fffffff,      // GNU symbol versions table.
+     SHT_HIOS = 0x6fffffff,            // Highest operating system-specific type.
+     SHT_LOPROC = 0x70000000,          // Lowest processor arch-specific type.
+     SHT_ARM_EXIDX = 0x70000001U,      // Exception Index table
+     SHT_ARM_PREEMPTMAP = 0x70000002U, // BPABI DLL dynamic linking pre-emption map
+     SHT_ARM_ATTRIBUTES = 0x70000003U, //  Object file compatibility attributes
+     SHT_ARM_DEBUGOVERLAY = 0x70000004U,
+     SHT_ARM_OVERLAYSECTION = 0x70000005U,
+     SHT_HEX_ORDERED = 0x70000000,     // Link editor is to sort the entries in this section based on their sizes
+     SHT_X86_64_UNWIND = 0x70000001,   // Unwind information
+     SHT_MIPS_REGINFO = 0x70000006,    // Register usage information
+     SHT_MIPS_OPTIONS = 0x7000000d,    // General options
+     SHT_MIPS_ABIFLAGS = 0x7000002a,   // Abiflags options
+     SHT_HIPROC = 0x7fffffff,          // Highest processor arch-specific type.
+     SHT_LOUSER = 0x80000000,          // Lowest type reserved for applications.
+     SHT_HIUSER = 0xffffffff           // Highest type reserved for applications.
+ };
+
+ // Section flags.
+ enum : unsigned {
+     // Section data should be writable during execution.
+     SHF_WRITE = 0x1,
+
+     // Section occupies memory during program execution.
+     SHF_ALLOC = 0x2,
+
+     // Section contains executable machine instructions.
+     SHF_EXECINSTR = 0x4,
+
+     // The data in this section may be merged.
+     SHF_MERGE = 0x10,
+
+     // The data in this section is null-terminated strings.
+     SHF_STRINGS = 0x20,
+
+     // A field in this section holds a section header table index.
+     SHF_INFO_LINK = 0x40U,
+
+     // Adds special ordering requirements for link editors.
+     SHF_LINK_ORDER = 0x80U,
+
+     // This section requires special OS-specific processing to avoid incorrect
+     // behavior.
+     SHF_OS_NONCONFORMING = 0x100U,
+
+     // This section is a member of a section group.
+     SHF_GROUP = 0x200U,
+
+     // This section holds Thread-Local Storage.
+     SHF_TLS = 0x400U,
+
+     // This section is excluded from the final executable or shared library.
+     SHF_EXCLUDE = 0x80000000U,
+
+     // Start of target-specific flags.
+
+     /// XCORE_SHF_CP_SECTION - All sections with the "c" flag are grouped
+     /// together by the linker to form the constant pool and the cp register is
+     /// set to the start of the constant pool by the boot code.
+     XCORE_SHF_CP_SECTION = 0x800U,
+
+     /// XCORE_SHF_DP_SECTION - All sections with the "d" flag are grouped
+     /// together by the linker to form the data section and the dp register is
+     /// set to the start of the section by the boot code.
+     XCORE_SHF_DP_SECTION = 0x1000U,
+
+     SHF_MASKOS = 0x0ff00000,
+
+     // Bits indicating processor-specific flags.
+     SHF_MASKPROC = 0xf0000000,
+
+     // If an object file section does not have this flag set, then it may not hold
+     // more than 2GB and can be freely referred to in objects using smaller code
+     // models. Otherwise, only objects using larger code models can refer to them.
+     // For example, a medium code model object can refer to data in a section that
+     // sets this flag besides being able to refer to data in a section that does
+     // not set it; likewise, a small code model object can refer only to code in a
+     // section that does not set this flag.
+     SHF_X86_64_LARGE = 0x10000000,
+
+     // All sections with the GPREL flag are grouped into a global data area
+     // for faster accesses
+     SHF_HEX_GPREL = 0x10000000,
+
+     // Section contains text/data which may be replicated in other sections.
+     // Linker must retain only one copy.
+     SHF_MIPS_NODUPES = 0x01000000,
+
+     // Linker must generate implicit hidden weak names.
+     SHF_MIPS_NAMES = 0x02000000,
+
+     // Section data local to process.
+     SHF_MIPS_LOCAL = 0x04000000,
+
+     // Do not strip this section.
+     SHF_MIPS_NOSTRIP = 0x08000000,
+
+     // Section must be part of global data area.
+     SHF_MIPS_GPREL = 0x10000000,
+
+     // This section should be merged.
+     SHF_MIPS_MERGE = 0x20000000,
+
+     // Address size to be inferred from section entry size.
+     SHF_MIPS_ADDR = 0x40000000,
+
+     // Section data is string data by default.
+     SHF_MIPS_STRING = 0x80000000
+ };
+
+ // Section Group Flags
+ enum : unsigned {
+     GRP_COMDAT = 0x1,
+     GRP_MASKOS = 0x0ff00000,
+     GRP_MASKPROC = 0xf0000000
+ };
+
+// 符号信息
+struct Elf32_Sym {
+    Elf32_Word    st_name;  // 符号名字，包含了该符号名在字符串表中的下标
+    Elf32_Addr    st_value; // 符号相对应的值，是一个绝对值，或地址等。不同的符号，含义不同
+    Elf32_Word    st_size;  // 符号的大小
+    unsigned char st_info;  // 符号的类型和绑定信息
+    unsigned char st_other; // 目前为 0，保留
+    Elf32_Half    st_shndx; // 符号所在段的下标
+};
+
+struct Elf64_Sym {
+    Elf64_Word      st_name;  // Symbol name (index into string table)
+    unsigned char   st_info;  // Symbol's type and binding attributes
+    unsigned char   st_other; // Must be zero; reserved
+    Elf64_Half      st_shndx; // Which section (header tbl index) it's defined in
+    Elf64_Addr      st_value; // Value or address associated with the symbol
+    Elf64_Xword     st_size;  // Size of the symbol
+};
+
 #endif // !ELF_H

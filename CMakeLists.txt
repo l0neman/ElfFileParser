@@ -3,11 +3,13 @@
 #
 cmake_minimum_required (VERSION 3.8)
 
-add_definitions(-D_PRINT_PROGRAM_HEADER_LIST_)
+# add_definitions(-D_PRINT_PROGRAM_HEADER_LIST_)
 
 add_definitions(-D_PRINT_SECTION_HEADER_LIST_)
 
 add_definitions(-D_PRINT_STRING_TABLE_)
+
+add_definitions(-D_PRINT_SYMBOL_TABLE_)
 
 project ("ElfFileParser")
 

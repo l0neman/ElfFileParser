@@ -7,7 +7,7 @@
 #include "type/elf.h"
 #include "util/Printer.h"
 
-ElfParser::ElfParser(): ElfParser(nullptr){}
+ElfParser::ElfParser() : ElfParser(nullptr) {}
 
 ElfParser::ElfParser(char const* elf_file)
 {
@@ -22,7 +22,9 @@ ElfParser::ElfParser(char const* elf_file)
     this->section_header32_list_ = nullptr;
     this->section_header64_list_ = nullptr;
 
-    this->string_buffer_ = nullptr;
+    this->symbol32_list_ = nullptr;
+    this->symbol64_list_ = nullptr;
+
     this->string_table_ = nullptr;
 
     if (elf_file == nullptr)
@@ -73,18 +75,26 @@ ElfParser::~ElfParser()
 
     if (this->string_table_ != nullptr)
     {
-        printf("delete string table.\n");
+        printf("delete string buffer.\n");
         delete[] this->string_table_;
         this->string_table_ = nullptr;
     }
 
-    if(this->string_buffer_ != nullptr)
+    if (this->symbol32_list_ != nullptr)
     {
-        printf("delete string buffer.\n");
-        delete[] this->string_buffer_;
-        this->string_buffer_ = nullptr;
+        printf("delete symbol 32 list_.\n");
+        delete[] this->symbol32_list_;
+        this->symbol32_list_ = nullptr;
+    }
+
+    if (this->symbol64_list_ != nullptr)
+    {
+        printf("delete symbol 64 list_.\n");
+        delete[] this->symbol64_list_;
+        this->symbol64_list_ = nullptr;
     }
 }
+
 
 void ElfParser::parse()
 {
@@ -99,6 +109,7 @@ void ElfParser::parse()
     parse_section_header_list();
     parse_string_table();
     parse_program_header_list();
+    parse_section_list();
 }
 
 template <typename T = Elf32_Ehdr>
@@ -339,7 +350,7 @@ void ElfParser::parse_string_table()
     {
         // ×Ö·û´®±íÏÂ±ê
         const auto str_table_index = this->elf_header32_.e_shstrndx;
-        const auto &section_header = this->section_header32_list_[str_table_index];
+        const auto& section_header = this->section_header32_list_[str_table_index];
         offset = section_header.sh_offset;
         size = section_header.sh_size;
     }
@@ -351,54 +362,85 @@ void ElfParser::parse_string_table()
         size = section_header.sh_size;
     }
 
-    if(0 != fseek(this->elf_file_, offset, 0))
+    if (0 != fseek(this->elf_file_, offset, 0))
     {
         printf("#parse_string_table - seek file error.\n");
         return;
     }
 
-    this->string_buffer_ = new char[size];
-    if(0 == fread(this->string_buffer_, size, 1, this->elf_file_))
+    this->string_table_ = new char[size];
+    if (0 == fread(this->string_table_, size, 1, this->elf_file_))
     {
         printf("parse string table%d error.\n", this->elf_bit_);
         return;
     }
 
-    std::vector<size_t> str_offset_list;
-    str_offset_list.push_back(1);
-    for(size_t i = 1; i < size; i++)
+    size_t string_count = 0;
+    for (size_t i = 1; i < size; i++)
     {
-        if (this->string_buffer_[i] == 0 && i != (size - 1))
-            str_offset_list.push_back(i + 1);
-    }
+        if (this->string_table_[i] == 0 && i != (size - 1))
+        {
+            const auto off = i + 1;
+            const auto* str = get_string_from_string_table(off);
+            const auto len = strlen(str);
 
-    const auto string_count = str_offset_list.size();
+            printf("str[%llu] \tlen: %llu, s: %s\n", off, len, str);
 
-    this->string_table_ = new Elf_Str[string_count];
-    size_t index = 0;
-    for(auto off : str_offset_list)
-    {
-        const auto* str = &this->string_buffer_[off];
-        const auto len = strlen(str);
-
-        if(index == string_count)
-            return;
-
-         this->string_table_[index].len = len;
-         this->string_table_[index].str = str;
-
-        index++;
-
-        const auto* tab = index < 10 ? "\t\t" : "\t";
-        printf("str[%llu] %slen: %llu, s: %s\n", index, tab, len, str);
+            string_count++;
+        }
     }
 
     printf("string count: %llu\n", string_count);
 }
 
+void ElfParser::parse_symbol_table(const long offset, const size_t size)
+{
+    printf("\n>>>>>>>>>>>> parse symbol table <<<<<<<<<<<<\n\n");
+
+    if (0 != fseek(this->elf_file_, offset, 0))
+    {
+        printf("#parse_symbol_table - seek file error.\n");
+        return;
+    }
+
+    size_t sym_size = 0;
+    size_t sym_count = 0;
+    void* symbol_buffer = nullptr;
+    if (this->elf_bit_ == 32)
+    {
+        sym_size = sizeof(Elf32_Sym);
+        sym_count = size / sym_size;
+        this->symbol32_list_ = new Elf32_Sym[sym_count];
+        symbol_buffer = this->symbol32_list_;
+    }
+    else // this->elf_bit_ == 64
+    {
+        sym_size = sizeof(Elf64_Sym);
+        sym_count = size / sym_size;
+
+        this->symbol64_list_ = new Elf64_Sym[sym_count];
+        symbol_buffer = this->symbol64_list_;
+    }
+
+    printf("symbol count: %llu\n", sym_count);
+
+    if (0 == fread(symbol_buffer, sym_size, sym_count, this->elf_file_))
+    {
+        printf("parse program header%d error.\n", this->elf_bit_);
+        return;
+    }
+
+    // todo: rest
+}
+
+const char* ElfParser::get_string_from_string_table(const size_t offset) const
+{
+    return &this->string_table_[offset];
+}
+
 void ElfParser::parse_program_header_list()
 {
-    printf("\n>>>>>>>>>>>> parse program header <<<<<<<<<<<<\n\n");
+    printf("\n>>>>>>>>>>>> parse program list <<<<<<<<<<<<\n\n");
 
     long program_header_offset = 0;
     size_t program_header_count = 0;
@@ -464,10 +506,14 @@ static void print_program_header(T* header, const uint8_t bit)
 
 void ElfParser::parse_program_header(const long offset, const size_t index) const
 {
+
+#ifdef _PRINT_PROGRAM_HEADER_LIST_
     printf("\n>>>>>>>>>>>> parse program header <<<<<<<<<<<<\n\n");
 
     printf("index: \t\t%llu\n", index);
     printf("offset: \t%ld\n", offset);
+#endif // _PRINT_PROGRAM_HEADER_LIST_
+
     if (0 != fseek(this->elf_file_, offset, 0))
     {
         printf("#parse_program_header - seek file error.\n");
@@ -502,4 +548,51 @@ void ElfParser::parse_program_header(const long offset, const size_t index) cons
         print_program_header(&this->program_header32_list_[index], 32);
     else
         print_program_header(&this->program_header64_list_[index], 64);
+}
+
+void ElfParser::parse_section_list()
+{
+    printf("\n>>>>>>>>>>>> parse section list <<<<<<<<<<<<\n\n");
+
+    size_t list_len = 0;
+    if (this->elf_bit_ == 32)
+        list_len = this->elf_header32_.e_shnum;
+    else // this->elf_bit_ == 64
+        list_len = this->elf_header64_.e_shnum;
+
+    if (this->elf_bit_ == 32) {
+        for (size_t i = 0; i < list_len; i++)
+        {
+            auto& section_header = this->section_header32_list_[i];
+            switch (section_header.sh_type)
+            {
+            case SHT_SYMTAB:
+            case SHT_DYNSYM:
+                printf("parse %s:\n", section_header.sh_type == SHT_SYMTAB ?
+                    "SHT_SYMTAB" : "SHT_DYNSYM");
+                parse_symbol_table(section_header.sh_offset, section_header.sh_size);
+                break;
+            default:
+                // ignore
+                break;
+            }
+        }
+    }
+    else // this->elf_bit_ == 64
+    {
+        for (size_t i = 0; i < list_len; i++)
+        {
+            auto& section_header = this->section_header64_list_[i];
+            switch (section_header.sh_type)
+            {
+            case SHT_SYMTAB:
+            case SHT_DYNSYM:
+                parse_symbol_table(section_header.sh_offset, section_header.sh_size);
+                break;
+            default:
+                // ignore
+                break;
+            }
+        }
+    }
 }
