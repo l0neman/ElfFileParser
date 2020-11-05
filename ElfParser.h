@@ -31,10 +31,8 @@ private:
     bool check_elf();
     void parse_elf_header();
     void parse_section_header_list();
-    void parse_section_header(long offset, size_t index) const;
     void parse_string_table();
     void parse_program_header_list();
-    void parse_program_header(long offset, size_t index) const;
     void parse_section_list();
     void parse_symbol_table(long offset, size_t size);
 
