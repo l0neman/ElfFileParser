@@ -24,6 +24,7 @@ private:
     Elf64_Shdr* section_header64_list_;
 
     char* string_table_;
+    char* symbol_string_table_;
 
     Elf32_Sym* symbol32_list_;
     Elf64_Sym* symbol64_list_;
@@ -32,11 +33,13 @@ private:
     void parse_elf_header();
     void parse_section_header_list();
     void parse_string_table();
+    void parse_symbol_string_table();
     void parse_program_header_list();
     void parse_section_list();
     void parse_symbol_table(long offset, size_t size);
 
     const char* get_string_from_string_table(size_t offset) const;
+    const char* get_string_from_symbol_string_table(size_t offset) const;
 };
 
 #endif // ELF_PARSER_H
