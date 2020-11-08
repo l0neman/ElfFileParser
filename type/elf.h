@@ -520,4 +520,30 @@ struct Elf64_Sym {
     Elf64_Xword     st_size;  // Size of the symbol
 };
 
+// Relocation entry, without explicit addend.
+struct Elf32_Rel {
+    Elf32_Addr r_offset; // Location (file byte offset, or program virtual addr)
+    Elf32_Word r_info;   // Symbol table index and type of relocation to apply
+};
+
+// Relocation entry with explicit addend.
+struct Elf32_Rela {
+    Elf32_Addr  r_offset; // Location (file byte offset, or program virtual addr)
+    Elf32_Word  r_info;   // Symbol table index and type of relocation to apply
+    Elf32_Sword r_addend; // Compute value for relocatable field by adding this
+};
+
+// Relocation entry, without explicit addend.
+struct Elf64_Rel {
+    Elf64_Addr  r_offset; // Location (file byte offset, or program virtual addr).
+    Elf64_Xword r_info;   // Symbol table index and type of relocation to apply.
+};
+
+// Relocation entry with explicit addend.
+struct Elf64_Rela {
+    Elf64_Addr   r_offset; // Location (file byte offset, or program virtual addr).
+    Elf64_Xword  r_info;   // Symbol table index and type of relocation to apply.
+    Elf64_Sxword r_addend; // Compute value for relocatable field by adding this.
+};
+
 #endif // !ELF_H

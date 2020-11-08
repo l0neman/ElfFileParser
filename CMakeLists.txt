@@ -11,6 +11,8 @@ add_definitions(-D_PRINT_STRING_TABLE_)
 
 add_definitions(-D_PRINT_SYMBOL_TABLE_)
 
+add_definitions(-D_PRINT_RELOCATION_TABLE)
+
 project ("ElfFileParser")
 
 # Add source to this project's executable.
