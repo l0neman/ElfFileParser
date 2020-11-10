@@ -618,7 +618,7 @@ void ElfParser::parse_section_list()
                 parse_relocation_table(section_header.sh_offset, section_header.sh_size);
                 break;
             default:
-                printf("ignore");
+                printf("ignored.\n");
                 break;
             }
         }
@@ -638,7 +638,7 @@ void ElfParser::parse_section_list()
                 parse_symbol_table(section_header.sh_offset, section_header.sh_size);
                 break;
             default:
-                printf("ignore.\n");
+                printf("ignored.\n");
                 break;
             }
         }
