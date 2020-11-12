@@ -1,4 +1,4 @@
-#ifndef ELF_PARSER_H
+﻿#ifndef ELF_PARSER_H
 #define ELF_PARSER_H
 #include <cstdio>
 #include "type/elf.h"

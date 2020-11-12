@@ -1,4 +1,4 @@
-#include "ElfParser.h"
+ï»¿#include "ElfParser.h"
 
 #include <cstring>
 #include <vector>
@@ -343,7 +343,7 @@ void ElfParser::parse_string_table()
     size_t size;
     if (this->elf_bit_ == 32)
     {
-        // ×Ö·û´®±íÏÂ±ê
+        // å­—ç¬¦ä¸²è¡¨ä¸‹æ ‡
         const auto str_table_index = this->elf_header32_.e_shstrndx;
         const auto& section_header = this->section_header32_list_[str_table_index];
         offset = section_header.sh_offset;

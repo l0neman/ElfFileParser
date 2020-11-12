@@ -1,4 +1,4 @@
-#ifndef ELF_H
+ï»¿#ifndef ELF_H
 #define ELF_H
 
 #include <cstdint>
@@ -21,10 +21,10 @@ static constexpr char ElfMagic[] = { 0x7f, 'E', 'L', 'F', '\0' };
 
 // e_ident size and indices.
 enum {
-    EI_MAG0 = 0,           // ÎÄ¼ş±êÊ¶Ë÷Òı
-    EI_MAG1 = 1,           // ÎÄ¼ş±êÊ¶Ë÷Òı
-    EI_MAG2 = 2,           // ÎÄ¼ş±êÊ¶Ë÷Òı
-    EI_MAG3 = 3,           // ÎÄ¼ş±êÊ¶Ë÷Òı
+    EI_MAG0 = 0,           // æ–‡ä»¶æ ‡è¯†ç´¢å¼•
+    EI_MAG1 = 1,           // æ–‡ä»¶æ ‡è¯†ç´¢å¼•
+    EI_MAG2 = 2,           // æ–‡ä»¶æ ‡è¯†ç´¢å¼•
+    EI_MAG3 = 3,           // æ–‡ä»¶æ ‡è¯†ç´¢å¼•
     EI_CLASS = 4,          // File class.
     EI_DATA = 5,           // Data encoding.
     EI_VERSION = 6,        // File version.
@@ -42,22 +42,22 @@ constexpr char ELFMAG[] = "\177ELF";
 constexpr int SELFMAG = 4;
 constexpr int NT_PRSTATUS = 1;
 
-// Elf ÎÄ¼şÍ·
+// Elf æ–‡ä»¶å¤´
 struct Elf32_Ehdr {
-    unsigned char e_ident[EI_NIDENT]; // ÎÄ¼ş±êÊ¶
-    Elf32_Half    e_type;      // ÎÄ¼şÀàĞÍ
-    Elf32_Half    e_machine;   // ELF ÎÄ¼şµÄ CPU Æ½Ì¨ÊôĞÔ£¬Ïà¹Ø³£Á¿ÒÔ EM_ ¿ªÍ·
-    Elf32_Word    e_version;   // ELF °æ±¾ºÅ£¬Ò»°ãÎª³£Êı 1
-    Elf32_Addr    e_entry;     // Èë¿ÚµØÖ·£¬¹æ¶¨ ELF ³ÌĞòµÄÈë¿ÚĞéÄâµØÖ·£¬²Ù×÷ÏµÍ³ÔÚ¼ÓÔØÍê¸Ã³ÌĞòºó´ÓÕâ¸öµØÖ·¿ªÊ¼Ö´ĞĞ½ø³ÌµÄÖ¸Áî
-    Elf32_Off     e_phoff;     // Program header ±íµÄÎÄ¼şÆ«ÒÆ×Ö½Ú
-    Elf32_Off     e_shoff;     // ¶Î±íÔÚÎÄ¼şÖĞµÄÆ«ÒÆ
-    Elf32_Word    e_flags;     // LF ±êÖ¾Î»£¬ÓÃÀ´±êÊ¶Ò»Ğ© ELF ÎÄ¼şÆ½Ì¨Ïà¹ØµÄÊôĞÔ¡£Ïà¹Ø³£Á¿¸ñÊ½Ò»°ãÎª EF_machine_flag£¬machine ÎªÆ½Ì¨£¬flag Îª±êÖ¾
-    Elf32_Half    e_ehsize;    // ELF ÎÄ¼şÍ·±¾ÉíµÄ´óĞ¡
-    Elf32_Half    e_phentsize; // Program header ±íµÄ´óĞ¡
-    Elf32_Half    e_phnum;     // Program header ±íµÄÊıÁ¿
-    Elf32_Half    e_shentsize; // ¶Î±íÃèÊö·ûµÄ´óĞ¡£¬Õâ¸öÒ»°ãµÈÓÚÒ»½Ú
-    Elf32_Half    e_shnum;     // ¶Î±íÃèÊö·ûÊıÁ¿¡£Õâ¸öÖµµÈÓÚ ELF ÎÄ¼şÖĞÓµÓĞ¶ÎµÄÊıÁ¿
-    Elf32_Half    e_shstrndx;  // ¶Î±í×Ö·û´®±íËùÔÚµÄ¶ÎÔÚ¶Î±íÖĞµÄÏÂ±ê
+    unsigned char e_ident[EI_NIDENT]; // æ–‡ä»¶æ ‡è¯†
+    Elf32_Half    e_type;      // æ–‡ä»¶ç±»å‹
+    Elf32_Half    e_machine;   // ELF æ–‡ä»¶çš„ CPU å¹³å°å±æ€§ï¼Œç›¸å…³å¸¸é‡ä»¥ EM_ å¼€å¤´
+    Elf32_Word    e_version;   // ELF ç‰ˆæœ¬å·ï¼Œä¸€èˆ¬ä¸ºå¸¸æ•° 1
+    Elf32_Addr    e_entry;     // å…¥å£åœ°å€ï¼Œè§„å®š ELF ç¨‹åºçš„å…¥å£è™šæ‹Ÿåœ°å€ï¼Œæ“ä½œç³»ç»Ÿåœ¨åŠ è½½å®Œè¯¥ç¨‹åºåä»è¿™ä¸ªåœ°å€å¼€å§‹æ‰§è¡Œè¿›ç¨‹çš„æŒ‡ä»¤
+    Elf32_Off     e_phoff;     // Program header è¡¨çš„æ–‡ä»¶åç§»å­—èŠ‚
+    Elf32_Off     e_shoff;     // æ®µè¡¨åœ¨æ–‡ä»¶ä¸­çš„åç§»
+    Elf32_Word    e_flags;     // LF æ ‡å¿—ä½ï¼Œç”¨æ¥æ ‡è¯†ä¸€äº› ELF æ–‡ä»¶å¹³å°ç›¸å…³çš„å±æ€§ã€‚ç›¸å…³å¸¸é‡æ ¼å¼ä¸€èˆ¬ä¸º EF_machine_flagï¼Œmachine ä¸ºå¹³å°ï¼Œflag ä¸ºæ ‡å¿—
+    Elf32_Half    e_ehsize;    // ELF æ–‡ä»¶å¤´æœ¬èº«çš„å¤§å°
+    Elf32_Half    e_phentsize; // Program header è¡¨çš„å¤§å°
+    Elf32_Half    e_phnum;     // Program header è¡¨çš„æ•°é‡
+    Elf32_Half    e_shentsize; // æ®µè¡¨æè¿°ç¬¦çš„å¤§å°ï¼Œè¿™ä¸ªä¸€èˆ¬ç­‰äºä¸€èŠ‚
+    Elf32_Half    e_shnum;     // æ®µè¡¨æè¿°ç¬¦æ•°é‡ã€‚è¿™ä¸ªå€¼ç­‰äº ELF æ–‡ä»¶ä¸­æ‹¥æœ‰æ®µçš„æ•°é‡
+    Elf32_Half    e_shstrndx;  // æ®µè¡¨å­—ç¬¦ä¸²è¡¨æ‰€åœ¨çš„æ®µåœ¨æ®µè¡¨ä¸­çš„ä¸‹æ ‡
 };
 
 
@@ -78,16 +78,16 @@ struct Elf64_Ehdr {
     Elf64_Half    e_shstrndx;
 };
 
-// ³ÌĞòÍ·±í£¬±íÊ¾×°ÔØºóµÄ Segment ½á¹¹
+// ç¨‹åºå¤´è¡¨ï¼Œè¡¨ç¤ºè£…è½½åçš„ Segment ç»“æ„
 struct Elf32_Phdr {
-    Elf32_Word p_type;   // ¶ÎÀàĞÍ
-    Elf32_Off  p_offset; // ¶ÎÔÚÎÄ¼şÖĞµÄÆ«ÒÆ
-    Elf32_Addr p_vaddr;  // ¶ÎµÄµÚÒ»¸ö×Ö½ÚÔÚĞéÄâµØÖ·¿Õ¼äµÄÆğÊ¼Î»ÖÃ£¬Õû¸ö³ÌĞò±íÍ·ÖĞ
-    Elf32_Addr p_paddr;  // ¶ÎµÄÎïÀí×°ÔØµØÖ·£¬¼´ LMA£¨Load Memory Address£©£¬Ò»°ãÇé¿öÏÂ p_paddr ºÍ p_vaddr ÊÇÏàÍ¬µÄ
-    Elf32_Word p_filesz; // ¶ÎÔÚ ELF ÎÄ¼şÖĞËùÕ¼¿Õ¼äµÄ³¤¶È£¬¿ÉÄÜÎª 0
-    Elf32_Word p_memsz;  // ¶ÎÔÚ½ø³ÌĞéÄâ¿Õ¼äÖĞËùÕ¼¿Õ¼äµÄ³¤¶È£¬¿ÉÄÜÎª 0
-    Elf32_Word p_flags;  // ¶ÎµÄÈ¨ÏŞÊôĞÔ£¬±ÈÈç¿É¶Á "R"£¬¿ÉĞ´ "W" ºÍ¿ÉÖ´ĞĞ "X"
-    Elf32_Word p_align;  // ¶ÎµÄ¶ÔÆëÊôĞÔ£¬Êµ¼Ê¶ÔÆë×Ö½ÚµÈÓÚ 2 µÄ p_align ´Î·½
+    Elf32_Word p_type;   // æ®µç±»å‹
+    Elf32_Off  p_offset; // æ®µåœ¨æ–‡ä»¶ä¸­çš„åç§»
+    Elf32_Addr p_vaddr;  // æ®µçš„ç¬¬ä¸€ä¸ªå­—èŠ‚åœ¨è™šæ‹Ÿåœ°å€ç©ºé—´çš„èµ·å§‹ä½ç½®ï¼Œæ•´ä¸ªç¨‹åºè¡¨å¤´ä¸­
+    Elf32_Addr p_paddr;  // æ®µçš„ç‰©ç†è£…è½½åœ°å€ï¼Œå³ LMAï¼ˆLoad Memory Addressï¼‰ï¼Œä¸€èˆ¬æƒ…å†µä¸‹ p_paddr å’Œ p_vaddr æ˜¯ç›¸åŒçš„
+    Elf32_Word p_filesz; // æ®µåœ¨ ELF æ–‡ä»¶ä¸­æ‰€å ç©ºé—´çš„é•¿åº¦ï¼Œå¯èƒ½ä¸º 0
+    Elf32_Word p_memsz;  // æ®µåœ¨è¿›ç¨‹è™šæ‹Ÿç©ºé—´ä¸­æ‰€å ç©ºé—´çš„é•¿åº¦ï¼Œå¯èƒ½ä¸º 0
+    Elf32_Word p_flags;  // æ®µçš„æƒé™å±æ€§ï¼Œæ¯”å¦‚å¯è¯» "R"ï¼Œå¯å†™ "W" å’Œå¯æ‰§è¡Œ "X"
+    Elf32_Word p_align;  // æ®µçš„å¯¹é½å±æ€§ï¼Œå®é™…å¯¹é½å­—èŠ‚ç­‰äº 2 çš„ p_align æ¬¡æ–¹
 };
 
 
@@ -318,18 +318,18 @@ enum {
 };
 
 
-// ¶Î±í
+// æ®µè¡¨
 struct Elf32_Shdr {
-    Elf32_Word sh_name;      // ¶ÎÃû£¬Î»ÓÚ .shstrtab µÄ×Ö·û´®±í¡£sh_name ÊÇ¶ÎÃûÔÚÆäÖĞµÄÆ«ÒÆ
-    Elf32_Word sh_type;      // ¶ÎÀàĞÍ£¨SHT_*£©
-    Elf32_Word sh_flags;     // ¶Î±êÖ¾Î»£¨SHF_*£©
-    Elf32_Addr sh_addr;      // ¶ÎµÄĞéÄâµØÖ·£¬Ç°ÌáÊÇ¸Ã¶Î¿É±»¼ÓÔØ£¬·ñÔòÎª 0
-    Elf32_Off  sh_offset;    // ¶ÎÆ«ÒÆ£¬Ç°ÌáÊÇ¸Ã¶Î´æÔÚÓÚÎÄ¼şÖĞ£¬·ñÔòÎŞÒâÒå
-    Elf32_Word sh_size;      // ¶ÎµÄ³¤¶È
-    Elf32_Word sh_link;      // ¶ÎµÄÁ´½ÓĞÅÏ¢
-    Elf32_Word sh_info;      // ¶ÎµÄ¶îÍâĞÅÏ¢
-    Elf32_Word sh_addralign; // ¶ÎµØÖ·¶ÔÆë
-    Elf32_Word sh_entsize;   // ÏîµÄ³¤¶È
+    Elf32_Word sh_name;      // æ®µåï¼Œä½äº .shstrtab çš„å­—ç¬¦ä¸²è¡¨ã€‚sh_name æ˜¯æ®µååœ¨å…¶ä¸­çš„åç§»
+    Elf32_Word sh_type;      // æ®µç±»å‹ï¼ˆSHT_*ï¼‰
+    Elf32_Word sh_flags;     // æ®µæ ‡å¿—ä½ï¼ˆSHF_*ï¼‰
+    Elf32_Addr sh_addr;      // æ®µçš„è™šæ‹Ÿåœ°å€ï¼Œå‰ææ˜¯è¯¥æ®µå¯è¢«åŠ è½½ï¼Œå¦åˆ™ä¸º 0
+    Elf32_Off  sh_offset;    // æ®µåç§»ï¼Œå‰ææ˜¯è¯¥æ®µå­˜åœ¨äºæ–‡ä»¶ä¸­ï¼Œå¦åˆ™æ— æ„ä¹‰
+    Elf32_Word sh_size;      // æ®µçš„é•¿åº¦
+    Elf32_Word sh_link;      // æ®µçš„é“¾æ¥ä¿¡æ¯
+    Elf32_Word sh_info;      // æ®µçš„é¢å¤–ä¿¡æ¯
+    Elf32_Word sh_addralign; // æ®µåœ°å€å¯¹é½
+    Elf32_Word sh_entsize;   // é¡¹çš„é•¿åº¦
 };
 
 
@@ -501,14 +501,14 @@ enum {
      GRP_MASKPROC = 0xf0000000
  };
 
-// ·ûºÅĞÅÏ¢
+// ç¬¦å·ä¿¡æ¯
 struct Elf32_Sym {
-    Elf32_Word    st_name;  // ·ûºÅÃû×Ö£¬°üº¬ÁË¸Ã·ûºÅÃûÔÚ×Ö·û´®±íÖĞµÄÏÂ±ê
-    Elf32_Addr    st_value; // ·ûºÅÏà¶ÔÓ¦µÄÖµ£¬ÊÇÒ»¸ö¾ø¶ÔÖµ£¬»òµØÖ·µÈ¡£²»Í¬µÄ·ûºÅ£¬º¬Òå²»Í¬
-    Elf32_Word    st_size;  // ·ûºÅµÄ´óĞ¡
-    unsigned char st_info;  // ·ûºÅµÄÀàĞÍºÍ°ó¶¨ĞÅÏ¢
-    unsigned char st_other; // Ä¿Ç°Îª 0£¬±£Áô
-    Elf32_Half    st_shndx; // ·ûºÅËùÔÚ¶ÎµÄÏÂ±ê
+    Elf32_Word    st_name;  // ç¬¦å·åå­—ï¼ŒåŒ…å«äº†è¯¥ç¬¦å·ååœ¨å­—ç¬¦ä¸²è¡¨ä¸­çš„ä¸‹æ ‡
+    Elf32_Addr    st_value; // ç¬¦å·ç›¸å¯¹åº”çš„å€¼ï¼Œæ˜¯ä¸€ä¸ªç»å¯¹å€¼ï¼Œæˆ–åœ°å€ç­‰ã€‚ä¸åŒçš„ç¬¦å·ï¼Œå«ä¹‰ä¸åŒ
+    Elf32_Word    st_size;  // ç¬¦å·çš„å¤§å°
+    unsigned char st_info;  // ç¬¦å·çš„ç±»å‹å’Œç»‘å®šä¿¡æ¯
+    unsigned char st_other; // ç›®å‰ä¸º 0ï¼Œä¿ç•™
+    Elf32_Half    st_shndx; // ç¬¦å·æ‰€åœ¨æ®µçš„ä¸‹æ ‡
 };
 
 struct Elf64_Sym {

@@ -1,9 +1,9 @@
-#include "Formatter.h"
+ï»¿#include "Formatter.h"
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
 
-// TODO: Ç°ÃæÌî³ä 0¡£
+// TODO: å‰é¢å¡«å…… 0ã€‚
 
 char const * Formatter::binary_8_bit(uint8_t n)
 {

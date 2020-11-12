@@ -1,4 +1,4 @@
-#ifndef FORMAT_H_
+﻿#ifndef FORMAT_H_
 #define FORMAT_H_
 
 #include <cstdint>
